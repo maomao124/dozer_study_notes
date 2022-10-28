@@ -54,7 +54,7 @@ dozer的maven坐标：
 
 
 
-第一步：创建项目dozer_demo
+### 第一步：创建项目dozer_demo
 
 
 
@@ -66,7 +66,7 @@ dozer的maven坐标：
 
 
 
-第二步：修改pom文件
+### 第二步：修改pom文件
 
 
 
@@ -129,7 +129,7 @@ dozer的maven坐标：
 
 
 
-第三步：创建UserEntity
+### 第三步：创建UserEntity
 
 
 
@@ -321,7 +321,7 @@ public class UserEntity
 
 
 
-第四步：创建UserDTO
+### 第四步：创建UserDTO
 
 
 
@@ -511,7 +511,7 @@ public class UserDTO
 
 
 
-第五步：在resources/dozer/目录下创建dozer的全局配置文件global.dozer.xml
+### 第五步：在resources/dozer/目录下创建dozer的全局配置文件global.dozer.xml
 
 
 
@@ -537,7 +537,7 @@ public class UserDTO
 
 
 
-第六步：在resources/dozer/目录下创建dozer的映射文件biz.dozer.xml
+### 第六步：在resources/dozer/目录下创建dozer的映射文件biz.dozer.xml
 
 
 
@@ -598,7 +598,7 @@ public class UserDTO
 
 
 
-第七步：编写配置类
+### 第七步：编写配置类
 
 
 
@@ -621,7 +621,7 @@ public class DozerMapperConfig
 
 
 
-第九步：编写单元测试类
+### 第八步：编写单元测试类
 
 
 
@@ -736,6 +736,498 @@ birthday：2022-10-28
 
 
 
+
+
+
+
+
+
+
+## 自定义spring boot starter
+
+### 开发starter
+
+
+
+第一步：初始化项目
+
+
+
+创建父工程dozer_starter_demo
+
+
+
+![image-20221028214439468](img/dozer学习笔记/image-20221028214439468.png)
+
+
+
+
+
+创建子工程tools-dozer
+
+
+
+![image-20221028214707782](img/dozer学习笔记/image-20221028214707782.png)
+
+
+
+
+
+
+
+创建子工程use-starter
+
+
+
+![image-20221028214843413](img/dozer学习笔记/image-20221028214843413.png)
+
+
+
+
+
+
+
+
+
+第二步：修改pom文件
+
+
+
+父工程dozer_starter_demo的pom文件：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>mao</groupId>
+    <artifactId>dozer_starter_demo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>dozer_starter_demo</name>
+    <description>dozer_starter_demo</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>11</java.version>
+    </properties>
+
+    <modules>
+        <module>tools-dozer</module>
+        <module>use-starter</module>
+    </modules>
+
+
+    <dependencies>
+
+    </dependencies>
+
+    <dependencyManagement>
+
+        <dependencies>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+
+
+
+
+子工程tools-dozer的pom文件：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>dozer_starter_demo</artifactId>
+        <groupId>mao</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tools-dozer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>tools-dozer</name>
+    <description>tools-dozer</description>
+
+    <properties>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-spring-boot-starter</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+
+        <!--spring boot starter开发依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+
+
+
+
+子工程use-starter的pom文件：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>dozer_starter_demo</artifactId>
+        <groupId>mao</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>use-starter</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>use-starter</name>
+    <description>use-starter</description>
+
+    <properties>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+
+
+
+
+
+
+第三步：编写工具类DozerUtils
+
+
+
+```java
+package mao.toolsdozer.utils;
+
+import com.github.dozermapper.core.Mapper;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Project name(项目名称)：dozer_starter_demo
+ * Package(包名): mao.toolsdozer.utils
+ * Class(类名): DozerUtils
+ * Author(作者）: mao
+ * Author QQ：1296193245
+ * GitHub：https://github.com/maomao124/
+ * Date(创建日期)： 2022/10/28
+ * Time(创建时间)： 21:57
+ * Version(版本): 1.0
+ * Description(描述)： 无
+ */
+
+public class DozerUtils
+{
+    private final Mapper mapper;
+
+    public DozerUtils(Mapper mapper)
+    {
+        this.mapper = mapper;
+    }
+
+    public Mapper getMapper()
+    {
+        return this.mapper;
+    }
+
+    /**
+     * 地图
+     * Constructs new instance of destinationClass and performs mapping between from source
+     *
+     * @param source           源
+     * @param destinationClass 目标类
+     * @return {@link T}
+     */
+    public <T> T map(Object source, Class<T> destinationClass)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+        return mapper.map(source, destinationClass);
+    }
+
+    /**
+     * map2
+     *
+     * @param source           源
+     * @param destinationClass 目标类
+     * @return {@link T}
+     */
+    public <T> T map2(Object source, Class<T> destinationClass)
+    {
+        if (source == null)
+        {
+            try
+            {
+                return destinationClass.newInstance();
+            }
+            catch (Exception ignored)
+            {
+            }
+        }
+        return mapper.map(source, destinationClass);
+    }
+
+    /**
+     * 地图
+     * Performs mapping between source and destination objects
+     *
+     * @param source      源
+     * @param destination 目地
+     */
+    public void map(Object source, Object destination)
+    {
+        if (source == null)
+        {
+            return;
+        }
+        mapper.map(source, destination);
+    }
+
+    /**
+     * 
+     * Constructs new instance of destinationClass and performs mapping between from source
+     *
+     * @param source           源
+     * @param destinationClass 目标类
+     * @param mapId            mapId
+     * @return {@link T}
+     */
+    public <T> T map(Object source, Class<T> destinationClass, String mapId)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+        return mapper.map(source, destinationClass, mapId);
+    }
+
+    /**
+     * 
+     * Performs mapping between source and destination objects
+     *
+     * @param source      源
+     * @param destination 目标
+     * @param mapId       mapId
+     */
+    public void map(Object source, Object destination, String mapId)
+    {
+        if (source == null)
+        {
+            return;
+        }
+        mapper.map(source, destination, mapId);
+    }
+
+    /**
+     * 
+     * 将集合转成集合
+     * List<A> -->  List<B>
+     *
+     * @param sourceList       源集合
+     * @param destinationClass 待转类型
+     * @return {@link List}<{@link T}>
+     */
+    public <T, E> List<T> mapList(Collection<E> sourceList, Class<T> destinationClass)
+    {
+        return mapPage(sourceList, destinationClass);
+    }
+
+
+    public <T, E> List<T> mapPage(Collection<E> sourceList, Class<T> destinationClass)
+    {
+        if (sourceList == null || sourceList.isEmpty() || destinationClass == null)
+        {
+            return Collections.emptyList();
+        }
+        return sourceList.stream()
+                .filter(Objects::nonNull)
+                .map((sourceObject) -> mapper.map(sourceObject, destinationClass))
+                .collect(Collectors.toList());
+    }
+
+    public <T, E> Set<T> mapSet(Collection<E> sourceList, Class<T> destinationClass)
+    {
+        if (sourceList == null || sourceList.isEmpty() || destinationClass == null)
+        {
+            return Collections.emptySet();
+        }
+        return sourceList.stream().map((sourceObject) -> mapper.map(sourceObject, destinationClass)).collect(Collectors.toSet());
+    }
+}
+```
+
+
+
+
+
+第四步：编写配置类DozerAutoConfiguration
+
+
+
+```java
+package mao.toolsdozer.config;
+
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.spring.DozerBeanMapperFactoryBean;
+import mao.toolsdozer.utils.DozerUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+
+/**
+ * Project name(项目名称)：dozer_starter_demo
+ * Package(包名): mao.toolsdozer.config
+ * Class(类名): DozerAutoConfiguration
+ * Author(作者）: mao
+ * Author QQ：1296193245
+ * GitHub：https://github.com/maomao124/
+ * Date(创建日期)： 2022/10/28
+ * Time(创建时间)： 22:03
+ * Version(版本): 1.0
+ * Description(描述)： 无
+ */
+
+@Configuration
+public class DozerAutoConfiguration
+{
+    @Bean
+    public DozerBeanMapperFactoryBean dozerMapper(@Value("classpath:dozer/*.xml") Resource[] resources)
+            throws IOException
+    {
+        DozerBeanMapperFactoryBean dozerBeanMapperFactoryBean = new DozerBeanMapperFactoryBean();
+        dozerBeanMapperFactoryBean.setMappingFiles(resources);
+        return dozerBeanMapperFactoryBean;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DozerUtils getDozerUtils(@Autowired Mapper mapper)
+    {
+        return new DozerUtils(mapper);
+    }
+}
+```
+
+
+
+
+
+
+
+第五步：创建并编写spring.factories文件
+
+
+
+```
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  mao.toolsdozer.config.DozerAutoConfiguration
+```
+
+
+
+
+
+
+
+
+
+
+
+### 使用starter
 
 
 
