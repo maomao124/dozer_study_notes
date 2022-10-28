@@ -1161,10 +1161,12 @@ import com.github.dozermapper.spring.DozerBeanMapperFactoryBean;
 import mao.toolsdozer.utils.DozerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.core.io.Resource;
+
 
 import java.io.IOException;
 
@@ -1184,22 +1186,26 @@ import java.io.IOException;
 @Configuration
 public class DozerAutoConfiguration
 {
-    @Bean
-    public DozerBeanMapperFactoryBean dozerMapper(@Value("classpath:dozer/*.xml") Resource[] resources)
+
+    /*public DozerBeanMapperFactoryBean dozerMapper(@Value("classpath:dozer/*.xml") Resource[] resources)
             throws IOException
     {
         DozerBeanMapperFactoryBean dozerBeanMapperFactoryBean = new DozerBeanMapperFactoryBean();
         dozerBeanMapperFactoryBean.setMappingFiles(resources);
         return dozerBeanMapperFactoryBean;
-    }
+    }*/
+
+    @Autowired
+    private Mapper mapper;
 
     @Bean
-    @ConditionalOnMissingBean
-    public DozerUtils getDozerUtils(@Autowired Mapper mapper)
+    public DozerUtils getDozerUtils() throws IOException
     {
         return new DozerUtils(mapper);
     }
+
 }
+
 ```
 
 
@@ -1228,6 +1234,331 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 
 ### 使用starter
+
+
+
+第一步：导入tools-dozer的依赖
+
+
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>dozer_starter_demo</artifactId>
+        <groupId>mao</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>use-starter</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>use-starter</name>
+    <description>use-starter</description>
+
+    <properties>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mao</groupId>
+            <artifactId>tools-dozer</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+
+
+
+
+
+
+第二步：拷贝之前编写的User类
+
+
+
+![image-20221028221422169](img/dozer学习笔记/image-20221028221422169.png)
+
+
+
+
+
+第三步：拷贝配置文件
+
+
+
+![image-20221028221552123](img/dozer学习笔记/image-20221028221552123.png)
+
+
+
+
+
+biz.dozer.xml：
+
+```xml
+<mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping
+                             http://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <!--描述两个类中属性的对应关系，对于两个类中同名的属性可以不映射-->
+
+    <mapping date-format="yyyy-MM-dd">
+        <class-a>mao.usestarter.entity.UserEntity</class-a>
+        <class-b>mao.usestarter.entity.UserDTO</class-b>
+
+        <field>
+            <a>id</a>
+            <b>userId</b>
+        </field>
+        <field>
+            <a>name</a>
+            <b>userName</b>
+        </field>
+        <field>
+            <a>age</a>
+            <b>userAge</b>
+        </field>
+
+    </mapping>
+
+    <mapping date-format="yyyy-MM-dd" map-id="user">
+        <class-a>mao.usestarter.entity.UserEntity</class-a>
+        <class-b>mao.usestarter.entity.UserDTO</class-b>
+
+        <field>
+            <a>id</a>
+            <b>userId</b>
+        </field>
+        <field>
+            <a>name</a>
+            <b>userName</b>
+        </field>
+        <field>
+            <a>age</a>
+            <b>userAge</b>
+        </field>
+
+    </mapping>
+
+
+
+</mappings>
+
+```
+
+
+
+
+
+第四步：编写配置文件application.yml
+
+
+
+```
+dozer:
+  mapping-files:
+    - classpath:dozer/global.dozer.xml
+    - classpath:dozer/biz.dozer.xml
+```
+
+
+
+
+
+第五步：编写UserController
+
+
+
+```java
+package mao.usestarter.controller;
+
+import mao.toolsdozer.utils.DozerUtils;
+import mao.usestarter.entity.UserDTO;
+import mao.usestarter.entity.UserEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+import java.util.Date;
+
+/**
+ * Project name(项目名称)：dozer_starter_demo
+ * Package(包名): mao.usestarter.controller
+ * Class(类名): UserController
+ * Author(作者）: mao
+ * Author QQ：1296193245
+ * GitHub：https://github.com/maomao124/
+ * Date(创建日期)： 2022/10/28
+ * Time(创建时间)： 22:18
+ * Version(版本): 1.0
+ * Description(描述)： 无
+ */
+
+
+@RestController
+public class UserController
+{
+
+    @Autowired
+    private DozerUtils dozerUtils;
+
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
+    @GetMapping("/test1")
+    public UserDTO test1()
+    {
+        log.info("test1");
+        UserEntity userEntity = new UserEntity("1234", "张三", 13, "中国", new Date());
+        log.info(userEntity.toString());
+        UserDTO userDTO = dozerUtils.map(userEntity, UserDTO.class);
+        log.info(userDTO.toString());
+        return userDTO;
+    }
+
+    @GetMapping("test2")
+    public UserEntity test2()
+    {
+        log.info("test2");
+        UserDTO userDTO = new UserDTO("1234", "张三", 13, "中国", "2011-07-23");
+        log.info(userDTO.toString());
+        UserEntity userEntity = dozerUtils.map(userDTO, UserEntity.class);
+        log.info(userEntity.toString());
+        return userEntity;
+    }
+}
+```
+
+
+
+
+
+
+
+第六步：启动程序
+
+
+
+```sh
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.7.1)
+
+2022-10-28 23:36:55.652  INFO 1684 --- [           main] mao.usestarter.UseStarterApplication     : Starting UseStarterApplication using Java 16.0.2 on mao with PID 1684 (H:\程序\大四上期\dozer_starter_demo\use-starter\target\classes started by mao in H:\程序\大四上期\dozer_starter_demo)
+2022-10-28 23:36:55.654  INFO 1684 --- [           main] mao.usestarter.UseStarterApplication     : No active profile set, falling back to 1 default profile: "default"
+2022-10-28 23:36:56.285  INFO 1684 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2022-10-28 23:36:56.292  INFO 1684 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-28 23:36:56.292  INFO 1684 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.64]
+2022-10-28 23:36:56.373  INFO 1684 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-28 23:36:56.373  INFO 1684 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 680 ms
+2022-10-28 23:36:56.418  INFO 1684 --- [           main] c.g.d.core.DozerBeanMapperBuilder        : Initializing Dozer. Version: 6.5.0, Thread Name: main
+2022-10-28 23:36:56.419  INFO 1684 --- [           main] c.g.dozermapper.core.util.RuntimeUtils   : OSGi support is false
+2022-10-28 23:36:56.422  INFO 1684 --- [           main] d.c.c.r.LegacyPropertiesSettingsResolver : Trying to find Dozer configuration file: dozer.properties
+2022-10-28 23:36:56.426  INFO 1684 --- [           main] d.c.c.r.LegacyPropertiesSettingsResolver : Failed to find dozer.properties via com.github.dozermapper.core.config.resolvers.LegacyPropertiesSettingsResolver.
+2022-10-28 23:36:56.428  WARN 1684 --- [           main] c.g.d.core.el.ELExpressionFactory        : javax.el is not supported; Failed to resolve ExpressionFactory, com.sun.el.ExpressionFactoryImpl
+2022-10-28 23:36:56.437  INFO 1684 --- [           main] c.g.d.c.b.xml.BeanMappingXMLBuilder      : Using URL [file:/H:/%e7%a8%8b%e5%ba%8f/%e5%a4%a7%e5%9b%9b%e4%b8%8a%e6%9c%9f/dozer_starter_demo/use-starter/target/classes/dozer/global.dozer.xml] to load custom xml mappings
+2022-10-28 23:36:56.569  INFO 1684 --- [           main] c.g.d.c.b.xml.SchemaLSResourceResolver   : Trying to resolve XML entity with public ID [null] and system ID [http://dozermapper.github.io/schema/bean-mapping.xsd]
+2022-10-28 23:36:56.570  INFO 1684 --- [           main] c.g.d.c.b.xml.SchemaLSResourceResolver   : Resolved public ID [null] and system ID [http://dozermapper.github.io/schema/bean-mapping.xsd]
+2022-10-28 23:36:56.589  INFO 1684 --- [           main] c.g.d.c.b.xml.BeanMappingXMLBuilder      : Successfully loaded custom xml mapping.
+2022-10-28 23:36:56.590  INFO 1684 --- [           main] c.g.d.c.b.xml.BeanMappingXMLBuilder      : Using URL [file:/H:/%e7%a8%8b%e5%ba%8f/%e5%a4%a7%e5%9b%9b%e4%b8%8a%e6%9c%9f/dozer_starter_demo/use-starter/target/classes/dozer/biz.dozer.xml] to load custom xml mappings
+2022-10-28 23:36:56.594  INFO 1684 --- [           main] c.g.d.c.b.xml.SchemaLSResourceResolver   : Trying to resolve XML entity with public ID [null] and system ID [http://dozermapper.github.io/schema/bean-mapping.xsd]
+2022-10-28 23:36:56.594  INFO 1684 --- [           main] c.g.d.c.b.xml.SchemaLSResourceResolver   : Resolved public ID [null] and system ID [http://dozermapper.github.io/schema/bean-mapping.xsd]
+2022-10-28 23:36:56.605  INFO 1684 --- [           main] c.g.d.c.b.xml.BeanMappingXMLBuilder      : Successfully loaded custom xml mapping.
+2022-10-28 23:36:56.829  INFO 1684 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2022-10-28 23:36:56.841  INFO 1684 --- [           main] mao.usestarter.UseStarterApplication     : Started UseStarterApplication in 1.472 seconds (JVM running for 1.952)
+```
+
+
+
+
+
+第七步：访问服务
+
+
+
+![image-20221028233837446](img/dozer学习笔记/image-20221028233837446.png)
+
+
+
+
+
+![image-20221028233847014](img/dozer学习笔记/image-20221028233847014.png)
+
+
+
+
+
+```sh
+2022-10-28 23:38:32.015  INFO 1684 --- [nio-8080-exec-1] m.usestarter.controller.UserController   : test1
+2022-10-28 23:38:32.015  INFO 1684 --- [nio-8080-exec-1] m.usestarter.controller.UserController   : id：1234
+name：张三
+age：13
+address：中国
+birthday：Fri Oct 28 23:38:32 CST 2022
+
+2022-10-28 23:38:32.021  INFO 1684 --- [nio-8080-exec-1] m.usestarter.controller.UserController   : userId：1234
+userName：张三
+userAge：13
+address：中国
+birthday：2022-10-28
+
+2022-10-28 23:38:43.110  INFO 1684 --- [nio-8080-exec-2] m.usestarter.controller.UserController   : test2
+2022-10-28 23:38:43.110  INFO 1684 --- [nio-8080-exec-2] m.usestarter.controller.UserController   : userId：1234
+userName：张三
+userAge：13
+address：中国
+birthday：2011-07-23
+
+2022-10-28 23:38:43.111  INFO 1684 --- [nio-8080-exec-2] m.usestarter.controller.UserController   : id：1234
+name：张三
+age：13
+address：中国
+birthday：Sat Jul 23 00:00:00 CST 2011
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
