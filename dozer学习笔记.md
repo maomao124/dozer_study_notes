@@ -1,3 +1,17 @@
+[TOC]
+
+---
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -749,7 +763,7 @@ birthday：2022-10-28
 
 
 
-第一步：初始化项目
+#### 第一步：初始化项目
 
 
 
@@ -789,7 +803,7 @@ birthday：2022-10-28
 
 
 
-第二步：修改pom文件
+#### 第二步：修改pom文件
 
 
 
@@ -912,11 +926,15 @@ birthday：2022-10-28
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
 
 </project>
+
 ```
 
 
@@ -978,7 +996,7 @@ birthday：2022-10-28
 
 
 
-第三步：编写工具类DozerUtils
+#### 第三步：编写工具类DozerUtils
 
 
 
@@ -1149,7 +1167,7 @@ public class DozerUtils
 
 
 
-第四步：编写配置类DozerAutoConfiguration
+#### 第四步：编写配置类DozerAutoConfiguration
 
 
 
@@ -1214,7 +1232,7 @@ public class DozerAutoConfiguration
 
 
 
-第五步：创建并编写spring.factories文件
+#### 第五步：创建并编写spring.factories文件
 
 
 
@@ -1237,7 +1255,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 
 
-第一步：导入tools-dozer的依赖
+#### 第一步：导入tools-dozer的依赖
 
 
 
@@ -1300,7 +1318,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 
 
-第二步：拷贝之前编写的User类
+#### 第二步：拷贝之前编写的User类
 
 
 
@@ -1310,7 +1328,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 
 
 
-第三步：拷贝配置文件
+#### 第三步：拷贝配置文件
 
 
 
@@ -1378,7 +1396,7 @@ biz.dozer.xml：
 
 
 
-第四步：编写配置文件application.yml
+#### 第四步：编写配置文件application.yml
 
 
 
@@ -1393,7 +1411,7 @@ dozer:
 
 
 
-第五步：编写UserController
+#### 第五步：编写UserController
 
 
 
@@ -1465,7 +1483,7 @@ public class UserController
 
 
 
-第六步：启动程序
+#### 第六步：启动程序
 
 
 
@@ -1506,7 +1524,7 @@ public class UserController
 
 
 
-第七步：访问服务
+#### 第七步：访问服务
 
 
 
@@ -1559,6 +1577,24 @@ birthday：Sat Jul 23 00:00:00 CST 2011
 
 
 
+
+
+
+
+
+
+
+---
+
+end
+
+---
+
+by mao
+
+2022  10  28
+
+---
 
 
 
